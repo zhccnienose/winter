@@ -7,6 +7,8 @@ from ...models.comments import CommentModel
 
 from ...schema.comment_sha import reg_args_vaild
 
+from app.api.common.res import res
+
 
 class AtcComment(Resource):
     # 创建评论
@@ -19,21 +21,25 @@ class AtcComment(Resource):
         # print(data)
         try:
             user = UserModel.find_by_username(get_jwt_identity())
+            if user is None:
+                return res(code=404, msg="User not found")
             data["uid"] = user.uid  # 用户id
             data["atc_id"] = id  # 文章id
 
             comment = CommentModel(**data)
             comment.add_comment()
 
-            return jsonify(code=200, msg="评论成功")
+            return res(code=200, msg="评论成功")
         except Exception as e:
-            return jsonify(code=500, msg=str(e))
+            return res(code=500, msg=str(e))
 
     # 获取该文章的评论列表
     def get(self, id):
-        last_cid = 0
-        comments = CommentModel.query.filter_by(atc_id=id, last_cid=last_cid).all()
-        data_comment = []
+        try:
+            last_cid = 0
+            data_comment = []
 
-        data_comment = CommentModel.get_comments(atc_id=id, last_cid=0, level=1)
-        return jsonify(code=200, msg="success", data=data_comment)
+            data_comment = CommentModel.get_comments(atc_id=id, last_cid=0, level=1)
+            return jsonify(code=200, msg="success", data=data_comment)
+        except Exception as e:
+            return res(code=500, msg=str(e))

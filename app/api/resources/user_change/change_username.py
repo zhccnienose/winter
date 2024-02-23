@@ -1,9 +1,9 @@
-from flask import jsonify
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.api.models.users import UserModel
 from app.api.models import db
+from app.api.common.res import res
 
 
 class ChangeUsername(Resource):
@@ -22,6 +22,6 @@ class ChangeUsername(Resource):
             db.session.add(user)
             db.session.commit()
 
-            return jsonify(code=200, msg="success")
+            return res(code=200, msg="success")
         except Exception as e:
-            return jsonify(code=500, msg=str(e))
+            return res(code=500, msg=str(e))

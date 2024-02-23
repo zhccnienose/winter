@@ -11,6 +11,8 @@ from app.api.resources.user_change.change_username import ChangeUsername
 from app.api.resources.user_change.change_password import ChangePassword
 
 from app.api.resources.article.add_articles import Articles
+from app.api.resources.article.del_article import DelArticle
+
 from app.api.resources.article.get_atc_mine import GetMyArticles
 from app.api.resources.article.get_atc_like import GetAtcLike
 from app.api.resources.article.get_atc_collect import GetAtcCollect
@@ -34,10 +36,9 @@ article = Api(article_bp)
 
 # 用户信息
 user.add_resource(Register, '/register/')
-user.add_resource(Login, '/login/', '/refreshtoken')
+user.add_resource(Login, '/login/')
 user.add_resource(Exit, "/exit/")
 user.add_resource(GetUser, "/information/")
-
 
 # 用户信息修改
 user_change.add_resource(ChangeHeadimage, '/head/')
@@ -46,6 +47,9 @@ user_change.add_resource(ChangePassword, "/password/")
 
 # 文章编辑
 article.add_resource(Articles, "/editor/")
+
+# 文章删除
+article.add_resource(DelArticle, "/<int:id>")
 
 # 文章列表
 article.add_resource(GetMyArticles, "/mine")  # 我写的

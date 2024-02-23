@@ -2,7 +2,7 @@ import os
 from app.config import UPLOAD_FOLDER
 
 from ..models import db
-from ..common.utils import pil_base64
+from ..common.pil_base64 import pil_base64
 
 
 # 用户类
@@ -12,7 +12,7 @@ class UserModel(db.Model):
     uid = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, doc="uid")  # 用户ID
     username = db.Column(db.String(50), nullable=False, doc="username")  # 用户名
     password = db.Column(db.String(255), nullable=False, doc="password")  # 用户密码
-    salt = db.Column(db.String(255), nullable=False, doc="salt")
+    salt = db.Column(db.String(255), nullable=False, doc="salt")  # 盐值
     headimage = db.Column(db.Text, nullable=False, doc="image")  # 用户头像名称
 
     def add_user(self):
@@ -41,7 +41,7 @@ class UserModel(db.Model):
 
     @classmethod
     def find_by_uid(cls, uid):
-        return db.session.execute(db.select(cls).filter_by(uid=uid)).first()
+        return cls.query.filter_by(uid=uid).first()
 
     @classmethod
     def get_all_user(cls):

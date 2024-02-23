@@ -1,11 +1,11 @@
-from flask import jsonify
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.api.models import r
 from app.api.models.articles import ArticleModel
 
-from ...common.utils import find_pos
+from ...common.find_pos import find_pos
+from app.api.common.res import res
 
 
 class AtcHit(Resource):
@@ -20,7 +20,7 @@ class AtcHit(Resource):
             username = get_jwt_identity()
             # 文章点击量+1(间隔三十秒及以上有效）
             if r.get(f"atc_{uid}_{id}_{username}_hits") is None:
-                # r.set(f"atc_{uid}_{id}_{username}_hits", 1, ex=30)
+                r.set(f"atc_{uid}_{id}_{username}_hits", 1, ex=30)
                 r.hincrby(f"atc_{uid}_{id}", "hits", 1)
 
                 hits = r.hget(f"atc_{uid}_{id}", "hits")
@@ -30,7 +30,7 @@ class AtcHit(Resource):
                 else:
                     hits = int(hits.decode("utf-8"))
 
-                print("-------", hits, "----------")
+                # print("-------", hits, "----------")
                 list_hot = r.lrange("list_hot", 0, -1)
                 list_hot_hit = r.lrange("list_hot_hit", 0, -1)
 
@@ -69,7 +69,7 @@ class AtcHit(Resource):
             else:
                 pass
 
-            return jsonify(code=200, msg="success")
+            return res(code=200, msg="success")
 
         except Exception as e:
-            return jsonify(code=500, msg=str(e))
+            return res(code=500, msg=str(e))

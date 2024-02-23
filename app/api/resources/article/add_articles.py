@@ -6,6 +6,7 @@ from app.api.schema.add_atc_sha import reg_args_vaild
 from app.api.models import r
 from app.api.models.users import UserModel
 from app.api.models.articles import ArticleModel
+from app.api.common.res import res
 
 
 class Articles(Resource):
@@ -18,14 +19,13 @@ class Articles(Resource):
 
         username = get_jwt_identity()
         if username is None:
-            return jsonify(code=500, msg="该用户不存在")
+            return res(code=404, msg="该用户不存在")
         else:
             try:
                 user = UserModel.find_by_username(username=username)
                 data['uid'] = user.data().get('uid')
                 # 获取当前文章id最大值并+1 作新文章的id
                 max_id = ArticleModel.query.with_entities(ArticleModel.id).order_by(-ArticleModel.id).first()
-                # print(max_id)
                 if max_id is None:
                     data['id'] = 1
                 else:
@@ -53,6 +53,6 @@ class Articles(Resource):
                     r.lpush("list_hot", f"atc_{article.uid}_{article.id}")
                     r.lpush("list_hot_hit", 0)
 
-                return jsonify(code=200, msg="添加成功")
+                return res(code=200, msg="添加成功")
             except Exception as e:
-                return jsonify(code=500, msg=str(e))
+                return res(code=500, msg=str(e))

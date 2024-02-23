@@ -32,7 +32,7 @@ class CommentModel(db.Model):
         data_comments = []
         for comment in comments:
             data = comment.data()
-            (user,) = UserModel.find_by_uid(comment.uid)
+            user = UserModel.find_by_uid(comment.uid)
             data["username"] = user.username
             data["head_image"] = user.headimage
 

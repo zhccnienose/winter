@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash
 
 from app.api.schema.login_sha import reg_args_vaild
 from app.api.models.users import UserModel
+from app.api.common.res import res
 
 
 # 用户登录
@@ -30,12 +31,12 @@ class Login(Resource):
                                    access_token=response_data.get('access_token'),
                                    refresh_token=response_data.get('refresh_token'))
                 else:
-                    return jsonify(code=400, msg="密码错误")
+                    return res(code=400, msg="密码错误")
 
             except Exception as e:
-                return jsonify(code=500, msg=str(e))
+                return res(code=500, msg=str(e))
         else:
-            return jsonify(code=404, msg="该用户不存在")
+            return res(code=404, msg="该用户不存在")
 
     @jwt_required(refresh=True)
     def get(self):

@@ -44,19 +44,44 @@ def create_app():
 
     @app.route('/testheadimages')
     def test_headimages():
-        path = "D:\\pyprojects\\winter\\static\\headimages\\test.jpg"
-        # path = "/roor/warmup/static/headimages/test.jpg"
-        return send_file(path, mimetype='image/jpg', as_attachment=True, download_name="test")
-        # return {'url': "/root/warmup/static/headimages/test.jpg"}
+        path = "/static/headimages/20240221224814.383692.jpg"
+        return send_file(path, mimetype='image/jpg')
+        # path = "/roor/warmup/static/headimages/20240221224814.383692.jpg"
+        # return {'url': "/root/warmup/static/headimages/20240221224814.383692.jpg"}
 
     return app
 
 
 def register_jwt_hooks(jwt):
+    # 检验是否在黑名单中
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blacklist(jwt_header, decrypted_token):
         jti = decrypted_token['jti']
         return TokenModel.check(jti)
+
+    # 过期返回信息
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, decrypted_token):
+        return {
+            'code': 403,
+            'message': 'expired token'
+        }
+
+    # 验证失败返回信息
+    @jwt.invalid_token_loader
+    def invalid_token_callback(jwt_header, decrypted_token):
+        return {
+            'code': 400,
+            'message': 'Invalid token'
+        }
+
+    # 缺少token返回信息
+    @jwt.unauthorized_loader
+    def missing_token_callback(jwt_header, decrypted_token):
+        return {
+            "code": 401,
+            "msg": "Missing token"
+        }
 
 
 app = create_app()
