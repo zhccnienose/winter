@@ -1,7 +1,7 @@
 from datetime import timedelta
 
-UPLOAD_FOLDER = 'D:\\pyprojects\\winter\\static\\headimages\\'
-# UPLOAD_FOLDER = '/root/warmup/static/headimages/'
+# UPLOAD_FOLDER = 'D:\\pyprojects\\winter\\static\\headimages\\'
+UPLOAD_FOLDER = '/root/warmup/static/headimages/'
 
 
 class Config(object):
@@ -9,7 +9,7 @@ class Config(object):
 
     SECRET_KEY = "secret_key"
 
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:310257813@47.115.212.55:3306/winter?charset=utf8"
+    SQLALCHEMY_DATABASE_URI = ""
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
