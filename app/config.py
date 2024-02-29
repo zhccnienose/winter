@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+# UPLOAD_FOLDER = 'D:\\pyprojects\\winter\\static\\headimages\\'
 UPLOAD_FOLDER = '/root/warmup/static/headimages/'
 
 SERVER_URL = "http://47.115.212.55:5000/"
@@ -12,7 +13,7 @@ class Config(object):
 
     SECRET_KEY = "secret_key"
 
-    SQLALCHEMY_DATABASE_URI = ""
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:310257813@47.115.212.55:3306/winter"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
