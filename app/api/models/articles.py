@@ -1,6 +1,7 @@
 from ..models import db, r
 from .users import UserModel
 from ..common.get_hclc import get_hclc
+from app.config import SERVER_URL, IMAGE_PATH
 
 
 # 文章类
@@ -27,7 +28,7 @@ class ArticleModel(db.Model):
                 "uid": self.uid}
 
         author = UserModel.find_by_uid(uid=self.uid)
-        info["author"] = {"username": author.username, "head_image": author.headimage}
+        info["author"] = {"username": author.username, "head_image": SERVER_URL + IMAGE_PATH + author.headimage}
 
         hits, likes, collects, comments = get_hclc(self.uid, self.id)
 

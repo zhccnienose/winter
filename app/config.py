@@ -1,7 +1,10 @@
 from datetime import timedelta
 
-# UPLOAD_FOLDER = 'D:\\pyprojects\\winter\\static\\headimages\\'
 UPLOAD_FOLDER = '/root/warmup/static/headimages/'
+
+SERVER_URL = "http://47.115.212.55:5000/"
+
+IMAGE_PATH = '/root/warmup/static/headimages/'
 
 
 class Config(object):

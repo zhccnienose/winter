@@ -6,6 +6,8 @@ from app.api.resources.users.login import Login
 from app.api.resources.users.exit import Exit
 from app.api.resources.users.get_user import GetUser
 
+from app.api.resources.users.head_image.image_file import UsersHeadImage
+
 from app.api.resources.user_change.change_headimage import ChangeHeadimage
 from app.api.resources.user_change.change_username import ChangeUsername
 from app.api.resources.user_change.change_password import ChangePassword
@@ -39,6 +41,9 @@ user.add_resource(Register, '/register/')
 user.add_resource(Login, '/login/')
 user.add_resource(Exit, "/exit/")
 user.add_resource(GetUser, "/information/")
+
+# 用户头像
+user.add_resource(UsersHeadImage, "/images/files/<image_name>")
 
 # 用户信息修改
 user_change.add_resource(ChangeHeadimage, '/head/')
