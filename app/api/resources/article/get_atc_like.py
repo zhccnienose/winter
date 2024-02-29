@@ -30,6 +30,12 @@ class GetAtcLike(Resource):
                 if atc is not None:
                     data = atc.data(user)
                     list_likes.append(data)
+                else:
+                    # 文章已删除，从点赞列表中去除并将记录-1
+                    r.hincrby("hset_delete", f"atc_{uid}_{id}", -1)
+                    # 若记录次数为0，则从删除记录
+                    if r.hget("hset_delete", f"atc_{uid}_{id}").decode("utf-8") == 0:
+                        r.hdel("hset_delete", f"atc_{uid}_{id}")
 
             return res(code=200, msg="success", data=list_likes)
         except Exception as e:

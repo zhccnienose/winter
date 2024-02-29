@@ -1,8 +1,7 @@
 import os
-from app.config import UPLOAD_FOLDER
+from app.config import SERVER_URL, IMAGE_PATH
 
 from ..models import db
-from ..common.pil_base64 import pil_base64
 
 
 # 用户类
@@ -20,13 +19,12 @@ class UserModel(db.Model):
         db.session.commit()
 
     def data(self):
-        head_image_path = os.path.join(UPLOAD_FOLDER, self.headimage)
-        head_image = pil_base64(head_image_path)
-        
+        head_image_path = SERVER_URL + IMAGE_PATH + self.headimage
+
         return {
             "uid": self.uid,
             "username": self.username,
-            "head_image": head_image
+            "head_image": head_image_path
         }
 
     def get_pwd(self):

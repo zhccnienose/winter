@@ -1,6 +1,10 @@
+import os
+
 from ..models import db, r
 from .users import UserModel
 from ..common.get_hclc import get_hclc
+
+from app.config import SERVER_URL, IMAGE_PATH
 
 
 # 文章类
@@ -27,7 +31,8 @@ class ArticleModel(db.Model):
                 "uid": self.uid}
 
         author = UserModel.find_by_uid(uid=self.uid)
-        info["author"] = {"username": author.username, "head_image": author.headimage}
+        info["author"] = {"username": author.username,
+                          "head_image": SERVER_URL + IMAGE_PATH + author.headimage}
 
         hits, likes, collects, comments = get_hclc(self.uid, self.id)
 
@@ -65,8 +70,17 @@ class ArticleModel(db.Model):
     def get_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 
-    def delete_by_id(self, id):
-        uid = self.uid
+    def delete(self):
+        uid = str(self.uid)  # 作者id
+        id = str(self.id)  # 文章id
+
+        # 点赞收藏的总次数，若归零，文章标识从哈希集合中删除
+        count = (int(r.hget(f"atc_{uid}_{id}", "likes").decode("utf-8")) +
+                 int(r.hget(f"atc_{uid}_{id}", "collects").decode("utf-8")))
+        if count > 0:
+            r.hset("hset_deltele", f"atc_{uid}_{id}", count)  # 将文章加入已删除集合
+        else:
+            pass
 
         r.delete(f"atc_{uid}_{id}")  # 删除数据记录
         r.lrem("list_new", 1, f"atc_{uid}_{id}")  # 从最新列表中移除
