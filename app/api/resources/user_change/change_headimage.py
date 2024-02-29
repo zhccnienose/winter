@@ -20,7 +20,7 @@ class ChangeHeadimage(Resource):
 
         username = get_jwt_identity()
         try:
-            user = UserModel.find_by_username(username=username)
+            user = UserModel.query.filter_by(username=username).first()
             os.remove(os.path.join(UPLOAD_FOLDER, user.headimage))
 
             image_name = datetime.now().strftime('%Y%m%d%H%M%S.%f') + ".jpg"

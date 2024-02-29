@@ -1,8 +1,8 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_file
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
-from .config import Config, UPLOAD_FOLDER
+from .config import Config
 
 from .api.models import db, r
 from .api import user_bp, article_bp, user_change_bp
@@ -44,7 +44,10 @@ def create_app():
 
     @app.route('/testheadimages')
     def test_headimages():
-        return send_from_directory(UPLOAD_FOLDER, "20240221224814.383692.jpg")
+        path = "/static/headimages/20240221224814.383692.jpg"
+        return send_file(path, mimetype='image/jpg')
+        # path = "/roor/warmup/static/headimages/20240221224814.383692.jpg"
+        # return {'url': "/root/warmup/static/headimages/20240221224814.383692.jpg"}
 
     return app
 
