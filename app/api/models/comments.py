@@ -1,5 +1,6 @@
 from ..models import db
 from .users import UserModel
+from app.config import SERVER_URL, IMAGE_PATH
 
 
 class CommentModel(db.Model):
@@ -34,7 +35,7 @@ class CommentModel(db.Model):
             data = comment.data()
             user = UserModel.find_by_uid(comment.uid)
             data["username"] = user.username
-            data["head_image"] = user.headimage
+            data["head_image"] = SERVER_URL + IMAGE_PATH + user.headimage
 
             data["kid_comments"] = cls.get_comments(atc_id=atc_id, last_cid=data["cid"], level=level + 1)
 
