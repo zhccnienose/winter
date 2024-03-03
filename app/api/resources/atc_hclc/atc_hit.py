@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -14,7 +15,6 @@ class AtcHit(Resource):
         try:
             # 获取文章信息
             article = ArticleModel.get_by_id(id=id)
-            # data = article.data()
             uid = article.uid
 
             username = get_jwt_identity()
@@ -34,14 +34,15 @@ class AtcHit(Resource):
                 list_hot = r.lrange("list_hot", 0, -1)
                 list_hot_hit = r.lrange("list_hot_hit", 0, -1)
 
-                for atc_id in list_hot:
-                    atc_id = atc_id.decode("utf-8")
+                for i in range(len(list_hot)):
+                    list_hot[i] = list_hot[i].decode("utf-8")
                 for i in range(len(list_hot_hit)):
                     list_hot_hit[i] = int(list_hot_hit[i].decode("utf-8"))
 
-                # 小于最小值
+                # 小于等于最小值
                 if list_hot_hit[0] >= hits:
                     pass
+                # 大于最大值
                 elif list_hot_hit[-1] < hits:
                     # 移除数量=1，该值存在
                     if r.lrem("list_hot", 1, f"atc_{uid}_{id}") == 1:
@@ -50,7 +51,6 @@ class AtcHit(Resource):
                     else:
                         r.lpop("list_hot")
                         r.lpop("list_hot_hit")
-
                     r.rpush("list_hot", f"atc_{uid}_{id}")
                     r.rpush("list_hot_hit", hits)
                 else:
@@ -58,13 +58,14 @@ class AtcHit(Resource):
                     hot_value, value = find_pos(list_hot, list_hot_hit, 0, len(list_hot_hit) - 1, hits)
 
                     if r.lrem("list_hot", 1, f"atc_{uid}_{id}") == 1:
+                        # print("-------------------------")
                         r.lrem("list_hot_hit", 1, hits - 1)
                     else:
                         r.lpop("list_hot")
                         r.lpop("list_hot_hit")
 
-                    r.linsert("list_hot", "after", hot_value, f"atc_{uid}_{id}")
-                    r.linsert("list_hot_hit", "after", value, hits)
+                    r.linsert("list_hot", "before", hot_value, f"atc_{uid}_{id}")
+                    r.linsert("list_hot_hit", "before", value, hits)
 
             else:
                 pass
@@ -72,4 +73,13 @@ class AtcHit(Resource):
             return res(code=200, msg="success")
 
         except Exception as e:
+            # print("--------")
+            # print(e)
+            # print("-----------")
+            with open("./log/atc_hit_error.log", "a") as f:
+                current_time = datetime.now()
+                current_time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
+                f.write(current_time_str)
+                f.write('\n')
+                f.write(str(e))
             return res(code=500, msg=str(e))
