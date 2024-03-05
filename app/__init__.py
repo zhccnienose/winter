@@ -46,8 +46,6 @@ def create_app():
     def test_headimages():
         path = "/static/headimages/20240221224814.383692.jpg"
         return send_file(path, mimetype='image/jpg')
-        # path = "/roor/warmup/static/headimages/20240221224814.383692.jpg"
-        # return {'url': "/root/warmup/static/headimages/20240221224814.383692.jpg"}
 
     return app
 
@@ -77,7 +75,7 @@ def register_jwt_hooks(jwt):
 
     # 缺少token返回信息
     @jwt.unauthorized_loader
-    def missing_token_callback(jwt_header, decrypted_token):
+    def missing_token_callback(decrypted_token):
         return {
             "code": 401,
             "msg": "Missing token"
