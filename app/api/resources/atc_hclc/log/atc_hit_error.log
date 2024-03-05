@@ -1,0 +1,35 @@
+2024-03-05 14:58:02
+list index out of range
+2024-03-05 14:58:32
+list index out of range2024-03-05 14:59:37
+list index out of range
+2024-03-05 15:04:16
+list index out of range
+2024-03-05 15:22:58
+'NoneType' object has no attribute 'uid'
+2024-03-05 15:29:11
+SortedSetCommands.zrange() got an unexpected keyword argument 'withsores'
+2024-03-05 15:30:58
+'tuple' object has no attribute 'decode'
+2024-03-05 15:31:59
+'tuple' object has no attribute 'decode'
+2024-03-05 15:32:22
+'tuple' object has no attribute 'decode'
+2024-03-05 15:32:55
+'tuple' object has no attribute 'decode'
+2024-03-05 15:33:11
+'tuple' object has no attribute 'decode'
+2024-03-05 15:33:46
+'str' object has no attribute 'decode'
+2024-03-05 15:34:22
+'bytes' object cannot be interpreted as an integer
+2024-03-05 15:34:46
+'bytes' object cannot be interpreted as an integer
+2024-03-05 15:35:16
+'bytes' object cannot be interpreted as an integer
+2024-03-05 15:35:47
+'bytes' object cannot be interpreted as an integer
+2024-03-05 15:36:35
+'float' object has no attribute 'decode'
+2024-03-05 15:55:11
+SortedSetCommands.zscore() missing 1 required positional argument: 'value'
