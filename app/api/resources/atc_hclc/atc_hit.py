@@ -1,12 +1,12 @@
-from datetime import datetime
+import os
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.api.models import r
 from app.api.models.articles import ArticleModel
 
-from ...common.find_pos import find_pos
 from app.api.common.res import res
+from app.api.common.write_500_error import write_500_error
 
 
 class AtcHit(Resource):
@@ -21,65 +21,40 @@ class AtcHit(Resource):
             # 文章点击量+1(间隔三十秒及以上有效）
             if r.get(f"atc_{uid}_{id}_{username}_hits") is None:
                 r.set(f"atc_{uid}_{id}_{username}_hits", 1, ex=30)
-                r.hincrby(f"atc_{uid}_{id}", "hits", 1)
 
                 hits = r.hget(f"atc_{uid}_{id}", "hits")
-
+                # print(hits)
+                r.hincrby(f"atc_{uid}_{id}", "hits", 1)
+                hits = r.hget(f"atc_{uid}_{id}", "hits")
+                # print(hits)
                 if hits is None:
                     hits = 0
                 else:
                     hits = int(hits.decode("utf-8"))
 
-                # print("-------", hits, "----------")
-                list_hot = r.lrange("list_hot", 0, -1)
-                list_hot_hit = r.lrange("list_hot_hit", 0, -1)
+                # 分数最小的元素和其分数值
+                min_member = r.zrange("list_hot", 0, 0, withscores=True)  # ((member1,score1))
+                min_atc_id = min_member[0][0].decode("utf-8")
+                min_score = min_member[0][1]
+                # print(min_atc_id, min_score)
 
-                for i in range(len(list_hot)):
-                    list_hot[i] = list_hot[i].decode("utf-8")
-                for i in range(len(list_hot_hit)):
-                    list_hot_hit[i] = int(list_hot_hit[i].decode("utf-8"))
-
-                # 小于等于最小值
-                if list_hot_hit[0] >= hits:
+                if hits <= min_score:
                     pass
-                # 大于最大值
-                elif list_hot_hit[-1] < hits:
-                    # 移除数量=1，该值存在
-                    if r.lrem("list_hot", 1, f"atc_{uid}_{id}") == 1:
-                        r.lrem("list_hot_hit", 1, hits - 1)
-                    # 该值不存在，则移除最小值
-                    else:
-                        r.lpop("list_hot")
-                        r.lpop("list_hot_hit")
-                    r.rpush("list_hot", f"atc_{uid}_{id}")
-                    r.rpush("list_hot_hit", hits)
                 else:
-                    # hot_value:第一篇点击数小于该文章的文章编号，value:第一篇小于该文章的点击数
-                    hot_value, value = find_pos(list_hot, list_hot_hit, 0, len(list_hot_hit) - 1, hits)
-
-                    if r.lrem("list_hot", 1, f"atc_{uid}_{id}") == 1:
-                        # print("-------------------------")
-                        r.lrem("list_hot_hit", 1, hits - 1)
+                    # 不存在与热门列表中，加入并删除最小元素
+                    if r.zscore("list_hot", f"atc_{uid}_{id}") is None:
+                        r.popmin("list_hot")
+                        r.zadd("list_hot", {f"atc_{uid}_{id}": hits})
+                        # print(hits)
+                    # 存在则分数+1
                     else:
-                        r.lpop("list_hot")
-                        r.lpop("list_hot_hit")
-
-                    r.linsert("list_hot", "before", hot_value, f"atc_{uid}_{id}")
-                    r.linsert("list_hot_hit", "before", value, hits)
-
+                        r.zincrby("list_hot", 1, f"atc_{uid}_{id}")
+                        # print(r.zscore("list_hot", f"atc_{uid}_{id}"))
             else:
                 pass
 
             return res(code=200, msg="success")
 
         except Exception as e:
-            # print("--------")
-            # print(e)
-            # print("-----------")
-            with open("./log/atc_hit_error.log", "a") as f:
-                current_time = datetime.now()
-                current_time_str = current_time.strftime("%Y-%m-%d %H:%M:%S")
-                f.write(current_time_str)
-                f.write('\n')
-                f.write(str(e))
+            write_500_error(os.getcwd(), str(e))
             return res(code=500, msg=str(e))
