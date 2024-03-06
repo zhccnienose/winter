@@ -1,6 +1,6 @@
-# 接口文档
-`https://apifox.com/apidoc/shared-22db28b4-2d98-4676-874e-4cfe46011f74`
-# 项目目录树
+# suppa（Android）
+
+## 项目目录树
 
 ```php
 winter
@@ -74,3 +74,18 @@ winter
 └── static
     └── headimages
 ```
+
+## 技术栈
+
+- Flask
+- Flask_RESTful
+- Flask_SQLAlchemy
+- Flask_JWT_Extended
+- Flask_Cors
+- Flask_Migrate
+- redis
+
+## 接口文档
+`https://apifox.com/apidoc/shared-22db28b4-2d98-4676-874e-4cfe46011f74`
+
+
