@@ -15,8 +15,11 @@ class Register(Resource):
     @staticmethod
     def post():
         parser = reqparse.RequestParser()
-        reg_args_vaild(parser)
+        msg = reg_args_vaild(parser)
         data = parser.parse_args()
+
+        if data['username'] == "" or data['password'] == "":
+            return res(code=400, msg="parse error")
 
         image_name = datetime.now().strftime('%Y%m%d%H%M%S.%f') + ".jpg"
         data['headimage'].save(os.path.join(UPLOAD_FOLDER, image_name))
